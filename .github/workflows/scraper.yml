@@ -1,0 +1,37 @@
+name: Scraper El Peruano Automático
+
+on:
+  schedule:
+    - cron: '0 11 * * *' # Todos los días a las 6:00 AM (Lima es UTC-5, así que 11:00 UTC)
+  workflow_dispatch: # Permite ejecutarlo manualmente con un botón desde la web
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip' # Acelera las ejecuciones cacheando las descargas
+          
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Instalar navegadores de Playwright
+        run: |
+          playwright install chromium --with-deps
+          
+      - name: Ejecutar el script (Todas las entidades)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          # Damos permisos de ejecución al bash script por si no los tuviera
+          chmod +x ./correr_todas.sh
+          ./correr_todas.sh
