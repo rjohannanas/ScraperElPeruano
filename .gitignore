@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+cache/
+temp/
+scraper.log
+.DS_Store
