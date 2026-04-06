@@ -3,4 +3,5 @@ httpx
 playwright
 psycopg2-binary
 PyMuPDF
+python-dotenv
 SQLAlchemy
