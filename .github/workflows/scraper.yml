@@ -2,7 +2,9 @@ name: Scraper El Peruano Automático
 
 on:
   schedule:
-    - cron: '0 9 * * *' # Todos los días a las 4:00 AM (Lima es UTC-5, así que 9:00 UTC)
+    - cron: '0 9 * * *'  # Todos los días a las 4:00 AM Lima (9:00 UTC)
+    - cron: '0 17 * * *' # Todos los días a las 12:00 PM Mediodía Lima (17:00 UTC)
+    - cron: '0 1 * * *'  # Todos los días a las 8:00 PM Lima (01:00 UTC del día sgte)
   workflow_dispatch: # Permite ejecutarlo manualmente con un botón desde la web
 
 jobs:
