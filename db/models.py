@@ -6,9 +6,8 @@ from db.database import Base
 class Entidad(Base):
     __tablename__ = "entidades"
 
-    id = Column(Integer, primary_key=True, index=True)
+    codigo_peruano = Column(Integer, primary_key=True, index=True, autoincrement=False)
     nombre = Column(String(255), nullable=False)
-    codigo_peruano = Column(Integer, unique=True, index=True, nullable=False)
     
     normas = relationship("Norma", back_populates="entidad")
     scraping_logs = relationship("ScrapingLog", back_populates="entidad")
@@ -17,10 +16,10 @@ class Norma(Base):
     __tablename__ = "normas"
 
     op = Column(String(100), primary_key=True, index=True)
-    entidad_id = Column(Integer, ForeignKey("entidades.id"), nullable=False)
+    entidad_id = Column(Integer, ForeignKey("entidades.codigo_peruano"), nullable=False)
     tipo_dispositivo = Column(String(255))
     nombre_dispositivo = Column(String(255), index=True)
-    fecha_publicacion = Column(String(8)) # YYYYMMDD from El Peruano
+    fecha_publicacion = Column(Date) # Native Date type
     sumilla = Column(Text)
     texto_completo = Column(Text)
     url_web = Column(String(500))
@@ -34,9 +33,9 @@ class ScrapingLog(Base):
     __tablename__ = "scraping_logs"
 
     id = Column(Integer, primary_key=True, index=True)
-    entidad_id = Column(Integer, ForeignKey("entidades.id"), nullable=True)
-    fecha_inicio_filtro = Column(String(8))
-    fecha_fin_filtro = Column(String(8))
+    entidad_id = Column(Integer, ForeignKey("entidades.codigo_peruano"), nullable=True)
+    fecha_inicio_filtro = Column(Date)
+    fecha_fin_filtro = Column(Date)
     timestamp_ejecucion = Column(DateTime, default=datetime.utcnow)
     timestamp_fin = Column(DateTime, nullable=True)
     normas_encontradas = Column(Integer, default=0)

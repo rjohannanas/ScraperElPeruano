@@ -20,9 +20,7 @@ def get_normas(
 ):
     query = db.query(Norma)
     if entidad_id:
-        entidad = db.query(Entidad).filter(Entidad.codigo_peruano == entidad_id).first()
-        if entidad:
-            query = query.filter(Norma.entidad_id == entidad.id)
+        query = query.filter(Norma.entidad_id == entidad_id)
             
     normas = query.order_by(Norma.fecha_publicacion.desc()).limit(limite).all()
     return {"total": len(normas), "data": normas}

@@ -21,14 +21,17 @@ def run_scraping_task(entidad_id: int, dias_atras: int = 1):
         db.commit()
         db.refresh(entidad)
 
-    fecha_ini = (datetime.today() - timedelta(days=dias_atras)).strftime("%Y%m%d")
-    fecha_fin = datetime.today().strftime("%Y%m%d")
+    fecha_ini_obj = datetime.today() - timedelta(days=dias_atras)
+    fecha_fin_obj = datetime.today()
+
+    fecha_ini_str = fecha_ini_obj.strftime("%Y%m%d")
+    fecha_fin_str = fecha_fin_obj.strftime("%Y%m%d")
 
     # Crear Log de Scraping
     log = ScrapingLog(
-        entidad_id=entidad.id,
-        fecha_inicio_filtro=fecha_ini,
-        fecha_fin_filtro=fecha_fin,
+        entidad_id=entidad.codigo_peruano,
+        fecha_inicio_filtro=fecha_ini_obj.date(),
+        fecha_fin_filtro=fecha_fin_obj.date(),
         estado="PROCESANDO"
     )
     db.add(log)
@@ -39,7 +42,7 @@ def run_scraping_task(entidad_id: int, dias_atras: int = 1):
     total_encontradas = 0
 
     try:
-        normas_raw = obtener_normas_graphql(entidad_id, fecha_ini, fecha_fin)
+        normas_raw = obtener_normas_graphql(entidad_id, fecha_ini_str, fecha_fin_str)
         total_encontradas = len(normas_raw)
 
         for n in normas_raw:
@@ -68,12 +71,15 @@ def run_scraping_task(entidad_id: int, dias_atras: int = 1):
             url_pdf = n.get("urlPDF")
             texto, fuente = obtener_html_norma(op, url_pdf)
             
+            fecha_pub_str = n.get("fechaPublicacion")
+            fecha_pub_date = datetime.strptime(fecha_pub_str, "%Y%m%d").date() if fecha_pub_str else None
+
             nueva_norma = Norma(
                 op=op,
-                entidad_id=entidad.id,
+                entidad_id=entidad.codigo_peruano,
                 tipo_dispositivo=n.get("tipoDispositivo"),
                 nombre_dispositivo=n.get("nombreDispositivo"),
-                fecha_publicacion=n.get("fechaPublicacion"),
+                fecha_publicacion=fecha_pub_date,
                 sumilla=n.get("sumilla"),
                 texto_completo=texto,
                 url_web=f"{BASE_URL}/dispositivo/NL/{op}",
