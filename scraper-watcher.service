@@ -1,0 +1,14 @@
+[Unit]
+Description=Watcher para el Scraper El Peruano
+After=network.target
+
+[Service]
+Type=simple
+User=gcp_setel_oee
+WorkingDirectory=/home/gcp_setel_oee/ScraperElPeruano
+ExecStart=/home/gcp_setel_oee/ScraperElPeruano/venv/bin/python3 watcher.py
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

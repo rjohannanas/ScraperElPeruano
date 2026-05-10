@@ -5,4 +5,7 @@ __pycache__/
 cache/
 temp/
 scraper.log
+watcher.log
+cron_log.log
+venv/
 .DS_Store
